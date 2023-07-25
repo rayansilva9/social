@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { parseCookies } from 'nookies'
+import { db } from '@/lib/firebase'
 
 type userContextProviderProps = {
   children: ReactNode
@@ -23,9 +24,14 @@ export const UserContextProvider: React.FC<userContextProviderProps> = ({ childr
   const [user, setUser] = useState<User | null>(null)
 
   const { USI: token } = parseCookies()
+
+
   useEffect(() => {
     if (token) {
       setUser(JSON.parse(token))
+
+
+
     }
   }, [token])
 

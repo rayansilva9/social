@@ -11,23 +11,37 @@ const SignUp = () => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [docId, setDocId] = useState('')
   const [loading, setLoading] = useState(false)
 
   const { push } = useRouter()
 
   const { setUser, user } = useContext(UserContext)
+
   const createUser = async (e: any) => {
     e.preventDefault()
     setLoading(true)
     createUserWithEmailAndPassword(auth, email, password)
       .then(async userCredential => {
         const userProps = {
-          displayName: userCredential.user.displayName,
+          username: username,
           email: userCredential.user.email,
-          uid: userCredential.user.uid
+          uid: userCredential.user.uid,
+          following: [userCredential.user.uid],
+          followers: [],
+          docId
         }
 
-        await db.collection('user').add(userProps)
+        await db.collection('user').add({
+          username: username,
+          email: userCredential.user.email,
+          uid: userCredential.user.uid,
+          following: [userCredential.user.uid],
+          followers: [],
+        }).then((docRef) => {
+          setDocId(docRef.id)
+          docRef.update({ docId: docRef.id, })
+        })
 
 
         setCookie(undefined, 'USI', JSON.stringify(userProps), {
